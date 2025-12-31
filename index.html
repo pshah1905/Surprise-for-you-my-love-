@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Uddipana ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:'Quicksand',sans-serif;
+}
+
+#bg{
+  position:fixed;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  transition:background-image .8s ease;
+  z-index:-2;
+}
+#overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:-1;
+}
+
+#app{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:16px;
+}
+
+.card{
+  width:100%;
+  max-width:420px;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(10px);
+  border-radius:22px;
+  padding:22px;
+  text-align:center;
+  animation:pop .45s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(.85);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+img{
+  width:100%;
+  border-radius:16px;
+  margin-bottom:12px;
+  animation:slide .6s ease;
+}
+
+@keyframes slide{
+  from{transform:translateY(40px);opacity:0}
+  to{transform:none;opacity:1}
+}
+
+h1,h2{
+  font-family:'Playfair Display',serif;
+  margin-bottom:8px;
+}
+
+p{
+  font-size:1.05rem;
+  line-height:1.5;
+  margin:8px 0;
+}
+
+button{
+  margin-top:14px;
+  padding:12px 28px;
+  border:none;
+  border-radius:999px;
+  background:#ff90cf;
+  color:#000;
+  font-weight:600;
+  font-size:1rem;
+  cursor:pointer;
+  animation:bounce 1.8s infinite;
+}
+
+@keyframes bounce{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+
+.shake{animation:shake .4s}
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  50%{transform:translateX(6px)}
+  75%{transform:translateX(-6px)}
+  100%{transform:translateX(0)}
+}
+
+.heart{
+  position:fixed;
+  font-size:22px;
+  animation:float 1.2s ease forwards;
+  pointer-events:none;
+}
+@keyframes float{
+  from{transform:translateY(0) scale(1);opacity:1}
+  to{transform:translateY(-120px) scale(1.6);opacity:0}
+}
+
+audio{display:none}
+</style>
+</head>
+
+<body>
+
+<div id="bg"></div>
+<div id="overlay"></div>
+<div id="app"></div>
+
+<!-- MUSIC -->
+<audio id="music" src="music.mp3" loop autoplay muted></audio>
+
+<!-- CLICK SOUND -->
+<audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_9c9b4b0f9f.mp3"></audio>
+
+<script>
+/* ================= BACKGROUNDS ================= */
+const backgrounds=[
+  "bg1.jpg",
+  "bg2.jpg",
+  "bg3.jpg",
+  "bg4.jpg",
+  "bg5.jpg"
+];
+let bgIndex=0;
+
+/* ================= AUDIO ================= */
+const music=document.getElementById("music");
+const clickSound=document.getElementById("clickSound");
+
+/* ================= HEART + VIBRATION ================= */
+function interactEffect(x,y){
+  const h=document.createElement("div");
+  h.className="heart";
+  h.innerText="💖";
+  h.style.left=x+"px";
+  h.style.top=y+"px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),1200);
+
+  if(navigator.vibrate){
+    navigator.vibrate(30);
+  }
+  clickSound.currentTime=0;
+  clickSound.play();
+}
+
+/* Enable music on first interaction */
+document.addEventListener("click",()=>{
+  music.muted=false;
+},{once:true});
+
+/* ================= GAME DATA ================= */
+const app=document.getElementById("app");
+
+const steps=[
+  {
+    img:"photo5.jpg",
+    text:"Meeting you was completely unexpected… yet somehow it felt written by the universe 💫"
+  },
+  {
+    img:"photo1.jpg",
+    text:"I told you *you* would be shy… look who became shy instead 😭💗 you teased me so bad"
+  },
+  {
+    imgs:["photo3.jpg","photo2.jpg"],
+    text:"That manga… that note 📖💛 you remembered something I wanted — that meant more than you know"
+  },
+  {
+    img:"photo4.jpg",
+    text:"This… this made me emotional. I never expected something so thoughtful 🎸❤️"
+  },
+  {
+    img:"photo6.jpg",
+    text:"That brown top + your smile… unfair combo 😌 I was done right there"
+  },
+  {
+    img:"photo7.jpg",
+    text:"Orange saree… mehendi… bangles… and you know how much I love orange on you 😭💗"
+  },
+  {
+    img:"photo8.jpg",
+    text:"Traditional you is dangerous. Please warn me next time 🫠"
+  },
+  {
+    img:"photo9.jpg",
+    text:"That pink saree… you looked like a literal fairy 🧚‍♀️💞"
+  },
+  {
+    img:"photo10.jpg",
+    text:"I wish I was there… waking up next to you… hiding under that blanket with you 🥺💗"
+  },
+  {
+    img:"photo11.jpg",
+    text:"When you send trial room pics… you have no idea how special it makes me feel"
+  },
+  {
+    img:"photo12.jpg",
+    text:"Purple + that lipstick + those earrings… illegal levels of gorgeous 😮‍💨💜"
+  },
+  {
+    img:"photo13.jpg",
+    text:"My favourite dress. And when you put it as your caller pic… I get distracted every time you call 😭💗"
+  },
+  {
+    question:true
+  }
+];
+
+let step=0;
+
+/* ================= RENDER ================= */
+function changeBackground(){
+  bgIndex=(bgIndex+1)%backgrounds.length;
+  document.getElementById("bg").style.backgroundImage=`url('${backgrounds[bgIndex]}')`;
+}
+
+function render(){
+  changeBackground();
+  app.innerHTML="";
+  const card=document.createElement("div");
+  card.className="card";
+
+  const data=steps[step];
+
+  if(data.question){
+    card.innerHTML=`
+      <h2>Quick question 😏</h2>
+      <p>Be honest… do you miss me right now?</p>
+      <button id="yes">Yes 🥺</button>
+      <button id="no">No 😐</button>
+    `;
+    app.appendChild(card);
+
+    document.getElementById("yes").onclick=e=>{
+      interactEffect(e.clientX,e.clientY);
+      step++;
+      render();
+    };
+
+    document.getElementById("no").onclick=e=>{
+      interactEffect(e.clientX,e.clientY);
+      card.classList.add("shake");
+      card.querySelector("p").innerText="How dare you 😤💖 I'm not letting you go. Try again.";
+    };
+    return;
+  }
+
+  if(data.imgs){
+    data.imgs.forEach(src=>{
+      const img=document.createElement("img");
+      img.src=src;
+      card.appendChild(img);
+    });
+  }else{
+    const img=document.createElement("img");
+    img.src=data.img;
+    card.appendChild(img);
+  }
+
+  const p=document.createElement("p");
+  p.innerText=data.text;
+  card.appendChild(p);
+
+  const btn=document.createElement("button");
+  btn.innerText="Next 💕";
+  btn.onclick=e=>{
+    interactEffect(e.clientX,e.clientY);
+    step++;
+    render();
+  };
+  card.appendChild(btn);
+
+  app.appendChild(card);
+}
+
+/* START */
+changeBackground();
+render();
+</script>
+
+</body>
+</html>
