@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>For Uddipana 💗</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For Uddipana ❤️</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+
 html,body{
   width:100%;
   height:100%;
@@ -16,38 +17,41 @@ html,body{
   font-family:'Quicksand',sans-serif;
 }
 
+/* BACKGROUND */
 #bg{
   position:fixed;
   inset:0;
   background-size:cover;
   background-position:center;
-  transition:background-image .8s ease;
+  transition:background-image 1s ease;
   z-index:-2;
 }
 #overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.55);
+  background:rgba(0,0,0,0.55);
   z-index:-1;
 }
 
+/* APP */
 #app{
   height:100vh;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   padding:16px;
 }
 
+/* CARD */
 .card{
   width:100%;
   max-width:420px;
-  background:rgba(255,255,255,.15);
-  backdrop-filter:blur(10px);
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(12px);
   border-radius:22px;
   padding:22px;
   text-align:center;
-  animation:pop .45s ease;
+  animation:pop .6s ease;
 }
 
 @keyframes pop{
@@ -55,35 +59,44 @@ html,body{
   to{transform:scale(1);opacity:1}
 }
 
+/* IMAGE */
 img{
   width:100%;
   border-radius:16px;
   margin-bottom:12px;
-  animation:slide .6s ease;
+  animation:slideUp .6s ease;
 }
-
-@keyframes slide{
+@keyframes slideUp{
   from{transform:translateY(40px);opacity:0}
   to{transform:none;opacity:1}
 }
 
+.row{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+}
+.row img{flex:0 0 85%}
+
+/* TEXT */
 h1,h2{
   font-family:'Playfair Display',serif;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
-
 p{
   font-size:1.05rem;
   line-height:1.5;
   margin:8px 0;
+  color:#fff;
 }
 
+/* BUTTON */
 button{
-  margin-top:14px;
+  margin-top:16px;
   padding:12px 28px;
   border:none;
   border-radius:999px;
-  background:#ff90cf;
+  background:#ff9fd6;
   color:#000;
   font-weight:600;
   font-size:1rem;
@@ -96,6 +109,7 @@ button{
   50%{transform:translateY(-6px)}
 }
 
+/* SHAKE */
 .shake{animation:shake .4s}
 @keyframes shake{
   0%{transform:translateX(0)}
@@ -105,6 +119,7 @@ button{
   100%{transform:translateX(0)}
 }
 
+/* HEART */
 .heart{
   position:fixed;
   font-size:22px;
@@ -113,7 +128,15 @@ button{
 }
 @keyframes float{
   from{transform:translateY(0) scale(1);opacity:1}
-  to{transform:translateY(-120px) scale(1.6);opacity:0}
+  to{transform:translateY(-140px) scale(1.6);opacity:0}
+}
+
+/* FIREWORK CANVAS */
+#fireworks{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:999;
 }
 
 audio{display:none}
@@ -126,175 +149,186 @@ audio{display:none}
 <div id="overlay"></div>
 <div id="app"></div>
 
-<!-- MUSIC -->
-<audio id="music" src="music.mp3" loop autoplay muted></audio>
+<canvas id="fireworks"></canvas>
 
-<!-- CLICK SOUND -->
+<audio id="music" src="music.mp3" loop></audio>
 <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_9c9b4b0f9f.mp3"></audio>
+<audio id="fireSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_6d9c36d3c4.mp3"></audio>
 
 <script>
-/* ================= BACKGROUNDS ================= */
-const backgrounds=[
-  "bg1.jpg",
-  "bg2.jpg",
-  "bg3.jpg",
-  "bg4.jpg",
-  "bg5.jpg"
-];
+/* BACKGROUNDS */
+const bgImages=["bg1.jpg","bg2.jpg","bg3.jpg","bg4.jpg","bg5.jpg"];
 let bgIndex=0;
+const bg=document.getElementById("bg");
 
-/* ================= AUDIO ================= */
+function changeBg(){
+  bg.style.backgroundImage=`url('${bgImages[bgIndex]}')`;
+  bgIndex=(bgIndex+1)%bgImages.length;
+}
+
+/* AUDIO */
 const music=document.getElementById("music");
 const clickSound=document.getElementById("clickSound");
+const fireSound=document.getElementById("fireSound");
+let musicStarted=false;
 
-/* ================= HEART + VIBRATION ================= */
-function interactEffect(x,y){
+/* HEART EFFECT + SOUND + VIBRATION */
+document.addEventListener("click",e=>{
   const h=document.createElement("div");
   h.className="heart";
   h.innerText="💖";
-  h.style.left=x+"px";
-  h.style.top=y+"px";
+  h.style.left=e.clientX+"px";
+  h.style.top=e.clientY+"px";
   document.body.appendChild(h);
   setTimeout(()=>h.remove(),1200);
 
-  if(navigator.vibrate){
-    navigator.vibrate(30);
-  }
   clickSound.currentTime=0;
   clickSound.play();
+  if(navigator.vibrate) navigator.vibrate(30);
+
+  if(!musicStarted){
+    music.play();
+    musicStarted=true;
+  }
+});
+
+/* FIREWORKS */
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+let fireworks=[];
+function launchFirework(){
+  fireworks.push({
+    x:Math.random()*canvas.width,
+    y:canvas.height,
+    vy:-Math.random()*8-6,
+    exploded:false,
+    particles:[]
+  });
+  fireSound.play();
 }
 
-/* Enable music on first interaction */
-document.addEventListener("click",()=>{
-  music.muted=false;
-},{once:true});
+function animateFireworks(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  fireworks.forEach((f,i)=>{
+    if(!f.exploded){
+      f.y+=f.vy;
+      f.vy+=0.15;
+      ctx.fillStyle="pink";
+      ctx.fillRect(f.x,f.y,3,3);
+      if(f.vy>=0){
+        f.exploded=true;
+        for(let j=0;j<40;j++){
+          f.particles.push({
+            x:f.x,y:f.y,
+            vx:(Math.random()-0.5)*6,
+            vy:(Math.random()-0.5)*6,
+            life:1
+          });
+        }
+      }
+    }else{
+      f.particles.forEach(p=>{
+        p.x+=p.vx;
+        p.y+=p.vy;
+        p.life-=0.02;
+        ctx.fillStyle=`rgba(255,100,150,${p.life})`;
+        ctx.fillRect(p.x,p.y,2,2);
+      });
+      f.particles=f.particles.filter(p=>p.life>0);
+      if(f.particles.length===0) fireworks.splice(i,1);
+    }
+  });
+  requestAnimationFrame(animateFireworks);
+}
+animateFireworks();
 
-/* ================= GAME DATA ================= */
+/* GAME DATA */
 const app=document.getElementById("app");
-
-const steps=[
-  {
-    img:"photo5.jpg",
-    text:"Meeting you was completely unexpected… yet somehow it felt written by the universe 💫"
-  },
-  {
-    img:"photo1.jpg",
-    text:"I told you *you* would be shy… look who became shy instead 😭💗 you teased me so bad"
-  },
-  {
-    imgs:["photo3.jpg","photo2.jpg"],
-    text:"That manga… that note 📖💛 you remembered something I wanted — that meant more than you know"
-  },
-  {
-    img:"photo4.jpg",
-    text:"This… this made me emotional. I never expected something so thoughtful 🎸❤️"
-  },
-  {
-    img:"photo6.jpg",
-    text:"That brown top + your smile… unfair combo 😌 I was done right there"
-  },
-  {
-    img:"photo7.jpg",
-    text:"Orange saree… mehendi… bangles… and you know how much I love orange on you 😭💗"
-  },
-  {
-    img:"photo8.jpg",
-    text:"Traditional you is dangerous. Please warn me next time 🫠"
-  },
-  {
-    img:"photo9.jpg",
-    text:"That pink saree… you looked like a literal fairy 🧚‍♀️💞"
-  },
-  {
-    img:"photo10.jpg",
-    text:"I wish I was there… waking up next to you… hiding under that blanket with you 🥺💗"
-  },
-  {
-    img:"photo11.jpg",
-    text:"When you send trial room pics… you have no idea how special it makes me feel"
-  },
-  {
-    img:"photo12.jpg",
-    text:"Purple + that lipstick + those earrings… illegal levels of gorgeous 😮‍💨💜"
-  },
-  {
-    img:"photo13.jpg",
-    text:"My favourite dress. And when you put it as your caller pic… I get distracted every time you call 😭💗"
-  },
-  {
-    question:true
-  }
-];
-
 let step=0;
 
-/* ================= RENDER ================= */
-function changeBackground(){
-  bgIndex=(bgIndex+1)%backgrounds.length;
-  document.getElementById("bg").style.backgroundImage=`url('${backgrounds[bgIndex]}')`;
-}
+const steps=[
+  {intro:true},
+  {img:"photo5.jpg",text:"Meeting you was completely unexpected… yet it felt like destiny 💫"},
+  {img:"photo1.jpg",text:"I told you you'd be shy… look who became shy instead 😭💗"},
+  {imgs:["photo2.jpg","photo3.jpg"],text:"That manga and that note 📖💛 you remembered"},
+  {img:"photo4.jpg",text:"This made me emotional 🎸❤️"},
+  {img:"photo6.jpg",text:"That brown suits you so well 🤎"},
+  {imgs:["photo7.jpg","photo8.jpg"],text:"Orange saree + mehendi = my weakness 😭💗"},
+  {img:"photo9.jpg",text:"You looked like a fairy ✨"},
+  {img:"photo10.jpg",text:"Wish I was there cuddling with you 🥺"},
+  {img:"photo11.jpg",text:"Your trial room pics make me feel special 💗"},
+  {img:"photo12.jpg",text:"Purple + lipstick + earrings = wow 💜"},
+  {img:"photo13.jpg",text:"My favourite dress, my favourite caller pic 😭💗"},
+  {question:true},
+  {final:true}
+];
 
 function render(){
-  changeBackground();
+  changeBg();
   app.innerHTML="";
   const card=document.createElement("div");
   card.className="card";
+  const s=steps[step];
 
-  const data=steps[step];
+  if(s.intro){
+    card.innerHTML=`<h2>Happy New Year 2026 ✨</h2>
+    <p>Meeting you was unexpected… you made me feel like home.</p>
+    <p>Uddipana 💗 this is for you.</p>
+    <button>Start 💕</button>`;
+  }
+  else if(s.question){
+    card.innerHTML=`<h2>One question 😏</h2>
+    <p>Will you be with me forever?</p>
+    <button id="yes">Yes 💖</button>
+    <button id="no">No 😐</button>`;
+  }
+  else if(s.final){
+    card.innerHTML=`<h1>I LOVE YOU ❤️</h1>
+    <p>Happy New Year 2026 🎆🎉</p>`;
+    for(let i=0;i<8;i++) setInterval(launchFirework,500);
+  }
+  else{
+    if(s.imgs){
+      const row=document.createElement("div");
+      row.className="row";
+      s.imgs.forEach(src=>{
+        const im=document.createElement("img");
+        im.src=src;
+        row.appendChild(im);
+      });
+      card.appendChild(row);
+    }else{
+      const im=document.createElement("img");
+      im.src=s.img;
+      card.appendChild(im);
+    }
+    const p=document.createElement("p");
+    p.innerText=s.text;
+    card.appendChild(p);
+    const b=document.createElement("button");
+    b.innerText="Next 💕";
+    card.appendChild(b);
+  }
 
-  if(data.question){
-    card.innerHTML=`
-      <h2>Quick question 😏</h2>
-      <p>Be honest… do you miss me right now?</p>
-      <button id="yes">Yes 🥺</button>
-      <button id="no">No 😐</button>
-    `;
-    app.appendChild(card);
+  app.appendChild(card);
 
-    document.getElementById("yes").onclick=e=>{
-      interactEffect(e.clientX,e.clientY);
+  card.querySelectorAll("button").forEach(btn=>{
+    btn.onclick=()=>{
+      if(s.question && btn.id==="no"){
+        card.classList.add("shake");
+        card.querySelector("p").innerText="How dare you 😤💖 Try again.";
+        return;
+      }
       step++;
       render();
     };
-
-    document.getElementById("no").onclick=e=>{
-      interactEffect(e.clientX,e.clientY);
-      card.classList.add("shake");
-      card.querySelector("p").innerText="How dare you 😤💖 I'm not letting you go. Try again.";
-    };
-    return;
-  }
-
-  if(data.imgs){
-    data.imgs.forEach(src=>{
-      const img=document.createElement("img");
-      img.src=src;
-      card.appendChild(img);
-    });
-  }else{
-    const img=document.createElement("img");
-    img.src=data.img;
-    card.appendChild(img);
-  }
-
-  const p=document.createElement("p");
-  p.innerText=data.text;
-  card.appendChild(p);
-
-  const btn=document.createElement("button");
-  btn.innerText="Next 💕";
-  btn.onclick=e=>{
-    interactEffect(e.clientX,e.clientY);
-    step++;
-    render();
-  };
-  card.appendChild(btn);
-
-  app.appendChild(card);
+  });
 }
 
-/* START */
-changeBackground();
+changeBg();
 render();
 </script>
 
