@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>For Uddipana 💗</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Uddipana 💗</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-
 html,body{
   width:100%;
   height:100%;
@@ -17,7 +16,6 @@ html,body{
   font-family:'Quicksand',sans-serif;
 }
 
-/* BACKGROUND */
 #bg{
   position:fixed;
   inset:0;
@@ -29,24 +27,22 @@ html,body{
 #overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.55);
+  background:rgba(0,0,0,.55);
   z-index:-1;
 }
 
-/* APP */
 #app{
   height:100vh;
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
   padding:16px;
 }
 
-/* CARD */
 .card{
   width:100%;
   max-width:420px;
-  background:rgba(255,255,255,0.15);
+  background:rgba(255,255,255,.15);
   backdrop-filter:blur(12px);
   border-radius:22px;
   padding:22px;
@@ -55,20 +51,19 @@ html,body{
 }
 
 @keyframes pop{
-  from{transform:scale(.85);opacity:0}
-  to{transform:scale(1);opacity:1}
+  from{transform:translateY(60px) scale(.9);opacity:0}
+  to{transform:none;opacity:1}
 }
 
-/* IMAGE */
 img{
   width:100%;
   border-radius:16px;
   margin-bottom:12px;
-  animation:slideUp .6s ease;
+  animation:imgPop .6s ease;
 }
-@keyframes slideUp{
-  from{transform:translateY(40px);opacity:0}
-  to{transform:none;opacity:1}
+@keyframes imgPop{
+  from{transform:scale(.85);opacity:0}
+  to{transform:scale(1);opacity:1}
 }
 
 .row{
@@ -78,19 +73,18 @@ img{
 }
 .row img{flex:0 0 85%}
 
-/* TEXT */
 h1,h2{
   font-family:'Playfair Display',serif;
   margin-bottom:10px;
+  color:#fff;
 }
 p{
   font-size:1.05rem;
-  line-height:1.5;
+  line-height:1.6;
   margin:8px 0;
   color:#fff;
 }
 
-/* BUTTON */
 button{
   margin-top:16px;
   padding:12px 28px;
@@ -101,15 +95,8 @@ button{
   font-weight:600;
   font-size:1rem;
   cursor:pointer;
-  animation:bounce 1.8s infinite;
 }
 
-@keyframes bounce{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
-}
-
-/* SHAKE */
 .shake{animation:shake .4s}
 @keyframes shake{
   0%{transform:translateX(0)}
@@ -119,7 +106,6 @@ button{
   100%{transform:translateX(0)}
 }
 
-/* HEART */
 .heart{
   position:fixed;
   font-size:22px;
@@ -131,7 +117,6 @@ button{
   to{transform:translateY(-140px) scale(1.6);opacity:0}
 }
 
-/* FIREWORK CANVAS */
 #fireworks{
   position:fixed;
   inset:0;
@@ -148,7 +133,6 @@ audio{display:none}
 <div id="bg"></div>
 <div id="overlay"></div>
 <div id="app"></div>
-
 <canvas id="fireworks"></canvas>
 
 <audio id="music" src="music.mp3" loop></audio>
@@ -161,19 +145,14 @@ const bgImages=["bg1.jpg","bg2.jpg","bg3.jpg","bg4.jpg","bg5.jpg"];
 let bgIndex=0;
 const bg=document.getElementById("bg");
 
-function changeBg(){
-  bg.style.backgroundImage=`url('${bgImages[bgIndex]}')`;
-  bgIndex=(bgIndex+1)%bgImages.length;
-}
-
 /* AUDIO */
 const music=document.getElementById("music");
 const clickSound=document.getElementById("clickSound");
 const fireSound=document.getElementById("fireSound");
 let musicStarted=false;
 
-/* HEART EFFECT + SOUND + VIBRATION */
-document.addEventListener("click",e=>{
+/* HEART + SOUND + VIBRATION */
+function buttonEffect(e){
   const h=document.createElement("div");
   h.className="heart";
   h.innerText="💖";
@@ -183,22 +162,27 @@ document.addEventListener("click",e=>{
   setTimeout(()=>h.remove(),1200);
 
   clickSound.currentTime=0;
-  clickSound.play();
-  if(navigator.vibrate) navigator.vibrate(30);
+  clickSound.play().catch(()=>{});
+  if(navigator.vibrate) navigator.vibrate([20,30,20]);
 
   if(!musicStarted){
-    music.play();
+    music.play().catch(()=>{});
     musicStarted=true;
   }
-});
+}
+
+function changeBg(){
+  bg.style.backgroundImage=`url('${bgImages[bgIndex]}')`;
+  bgIndex=(bgIndex+1)%bgImages.length;
+}
 
 /* FIREWORKS */
 const canvas=document.getElementById("fireworks");
 const ctx=canvas.getContext("2d");
 canvas.width=innerWidth;
 canvas.height=innerHeight;
-
 let fireworks=[];
+
 function launchFirework(){
   fireworks.push({
     x:Math.random()*canvas.width,
@@ -207,7 +191,7 @@ function launchFirework(){
     exploded:false,
     particles:[]
   });
-  fireSound.play();
+  fireSound.play().catch(()=>{});
 }
 
 function animateFireworks(){
@@ -245,25 +229,27 @@ function animateFireworks(){
 }
 animateFireworks();
 
-/* GAME DATA */
+/* GAME FLOW */
 const app=document.getElementById("app");
 let step=0;
 
 const steps=[
-  {intro:true},
-  {img:"photo5.jpg",text:"Meeting you was completely unexpected… yet it felt like destiny 💫"},
-  {img:"photo1.jpg",text:"I told you you'd be shy… look who became shy instead 😭💗"},
-  {imgs:["photo2.jpg","photo3.jpg"],text:"That manga and that note 📖💛 you remembered"},
-  {img:"photo4.jpg",text:"This made me emotional 🎸❤️"},
-  {img:"photo6.jpg",text:"That brown suits you so well 🤎"},
-  {imgs:["photo7.jpg","photo8.jpg"],text:"Orange saree + mehendi = my weakness 😭💗"},
-  {img:"photo9.jpg",text:"You looked like a fairy ✨"},
-  {img:"photo10.jpg",text:"Wish I was there cuddling with you 🥺"},
-  {img:"photo11.jpg",text:"Your trial room pics make me feel special 💗"},
-  {img:"photo12.jpg",text:"Purple + lipstick + earrings = wow 💜"},
-  {img:"photo13.jpg",text:"My favourite dress, my favourite caller pic 😭💗"},
-  {question:true},
-  {final:true}
+{intro:true},
+{img:"photo5.jpg",text:"Seeing you that day… honestly, I still remember how calm and warm it felt. I was genuinely grateful I got to meet you. That moment stays with me 💗"},
+{prank:"question"},
+{img:"photo1.jpg",text:"I was literally telling you that YOU would be shy… and look who actually became shy 😭💗 And you teasing me so confidently? unfair."},
+{imgPair:["photo3.jpg","photo2.jpg"],text:"That manga I wanted, and that cute little note… you remembered something so small but so important to me. I felt really loved there 📖💛"},
+{prank:"move"},
+{img:"photo4.jpg",text:"This honestly made me emotional. I did not expect this at all, and the effort behind it touched me deeply 🎸❤️"},
+{img:"photo6.jpg",text:"That brown suits you so perfectly… and your smile in this? uff. Lovely as always 🤎"},
+{imgPair:["photo7.jpg","photo8.jpg"],text:"Your mehendi, your bangles, that orange saree… and you KNOW how much I love orange on you 😭💗 Traditional you is dangerous."},
+{prank:"long"},
+{img:"photo9.jpg",text:"You looked like a fairy here. Soft, graceful, and unreal 🧚‍♀️✨"},
+{img:"photo10.jpg",text:"I really wish I was there… waking up to your beautiful face and then hiding under that blanket with you while cuddling 🥺💗"},
+{img:"photo11.jpg",text:"I love when you send me trial room dress pics. It makes me feel involved, special, and close to you."},
+{img:"photo12.jpg",text:"That purple saree, that lipstick on your lips, those earrings… I couldn’t stop staring 💜"},
+{img:"photo13.jpg",text:"You know this is my favourite dress. And when you set this as your caller profile pic? I get distracted every time you call 😂💗"},
+{finalLove:true}
 ];
 
 function render(){
@@ -275,28 +261,34 @@ function render(){
 
   if(s.intro){
     card.innerHTML=`<h2>Happy New Year 2026 ✨</h2>
-    <p>Meeting you was unexpected… you made me feel like home.</p>
-    <p>Uddipana 💗 this is for you.</p>
+    <p>Meeting you was completely unexpected. I never thought I would fall for anyone again or feel like myself again… but you made me feel at home. Like the universe wanted us to meet.</p>
+    <p>Uddipana 💗 I made this for you.</p>
     <button>Start 💕</button>`;
   }
-  else if(s.question){
-    card.innerHTML=`<h2>One question 😏</h2>
-    <p>Will you be with me forever?</p>
-    <button id="yes">Yes 💖</button>
-    <button id="no">No 😐</button>`;
+  else if(s.prank==="question"){
+    card.innerHTML=`<h2>Quick test 😏</h2><p>Do you miss me right now?</p>
+    <button id="yes">Yes 🥺</button><button id="no">No 😐</button>`;
   }
-  else if(s.final){
+  else if(s.prank==="move"){
+    card.innerHTML=`<h2>Catch me 😌</h2><p>Click the button if you like me</p>
+    <button id="run">I like you 💗</button>`;
+  }
+  else if(s.prank==="long"){
+    card.innerHTML=`<h2>Secret level 👀</h2><p>Hold the button for 2 seconds</p>
+    <button id="hold">Hold me 🤍</button>`;
+  }
+  else if(s.finalLove){
     card.innerHTML=`<h1>I LOVE YOU ❤️</h1>
-    <p>Happy New Year 2026 🎆🎉</p>`;
-    for(let i=0;i<8;i++) setInterval(launchFirework,500);
+    <p>Happy New Year 2026, my love. I hope this year brings us closer, happier, and stronger together. With you, always 💗</p>`;
+    setInterval(launchFirework,600);
   }
   else{
-    if(s.imgs){
+    if(s.imgPair){
       const row=document.createElement("div");
       row.className="row";
-      s.imgs.forEach(src=>{
+      s.imgPair.forEach(i=>{
         const im=document.createElement("img");
-        im.src=src;
+        im.src=i;
         row.appendChild(im);
       });
       card.appendChild(row);
@@ -316,10 +308,24 @@ function render(){
   app.appendChild(card);
 
   card.querySelectorAll("button").forEach(btn=>{
-    btn.onclick=()=>{
-      if(s.question && btn.id==="no"){
+    btn.onclick=e=>{
+      buttonEffect(e);
+      if(s.prank==="question" && btn.id==="no"){
         card.classList.add("shake");
-        card.querySelector("p").innerText="How dare you 😤💖 Try again.";
+        return;
+      }
+      if(s.prank==="move"){
+        btn.style.position="relative";
+        btn.style.left=(Math.random()*120-60)+"px";
+        btn.style.top=(Math.random()*120-60)+"px";
+        return;
+      }
+      if(s.prank==="long"){
+        let t=setTimeout(()=>{
+          step++;
+          render();
+        },2000);
+        btn.onmouseup=btn.ontouchend=()=>clearTimeout(t);
         return;
       }
       step++;
